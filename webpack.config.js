@@ -1,37 +1,46 @@
 /**
  * WebPack Defalut 설정 
  */
-
-
 var path = require("path");
-
 module.exports = {
-  entry: './js/main.js',
+  entry: './index.ts',
   output: {
-    path: __dirname + "build",
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    path: __dirname
   },
-  devServer: {
-      inline: true,
-      port: 7777,
-      contentBase: __dirname + '/build/'
-  },
+  devtool: 'source-map',
   module: {
     rules: [{
-      test: /\.js$/,
-      exclude: /(node_modules)/,
-      use: [{
-        loader: 'babel-loader',
+        enforce: 'pre',
+        test: /\.js$/,
+        loader: "source-map-loader"
+      },
+      {
+        enforce: 'pre',
+        test: /\.tsx?$/,
+        use: "source-map-loader"
+      },
+      {
+        test: /\.tsx?$/,
+        loader: 'ts-loader',
+        exclude: /node_modules|vue\/src/,
         options: {
-          presets: [['es2015', {modules: false}]],
-          plugins: [
-            'syntax-dynamic-import',
-            'transform-async-to-generator',
-            'transform-regenerator',
-            'transform-runtime'
-          ]
+          appendTsSuffixTo: [/\.vue$/]
         }
-      }]
-    }]
-  }
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          esModule: true
+        }
+      }
+    ]
+  },
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.common.js'
+    },
+    extensions: [".tsx", ".ts", ".js"]
+  },
 };
